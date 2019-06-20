@@ -1,0 +1,96 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+typedef struct BiNode{
+	int data;
+	char key;
+	struct BiNode *lchild;
+	struct BiNode *rchild;
+}BiNode,*BiTree;
+
+char op[4]={'+','-','*','/'};
+BiTree head;
+
+/*
+ num:???????
+ L:?????????
+ R:?????????
+ l:?????????(????)
+ r:?????????(????)
+*/
+
+void output(BiTree T,int r,int l)
+{
+	if(T=NULL)
+		return ;
+	output(T->lchild,0,l+1);
+	if(T->lchild==NULL&&T->rchild==NULL)
+	{
+		int i;
+		for(i=0;i<l;i++)
+		{
+			printf("(");
+		}
+		printf("%d",T->data);
+		for(i=0;i<r;i++)
+		{
+			printf(")");
+		}
+	}
+	else
+	{
+		printf("%c",T->key);
+	}
+	output(T->rchild,r+1,0);
+}
+
+void Tree(BiTree &T,int num,int L,int NUM[])
+{        
+    int Num[4];
+    for(int i=0;i<4;i++)
+    {
+        Num[i]=NUM[i];
+    }
+    T=(BiTree)malloc(sizeof(BiNode));
+    if(num==1)
+    {
+        for(int i=0;i<4;i++)
+        {
+            if(Num[i]!=0)
+            {
+                T->data=Num[i];
+                Num[i]=0;
+                if(L==0)
+                {
+                    output(head,0,0);
+                }
+				return ;
+            }
+        }
+		T->lchild=NULL;
+		T->rchild=NULL;
+    }
+    else
+    {
+        for(int i=1;i<num;i++)
+        {
+            for(int k=0;k<4;k++)
+            {
+                T->key=op[k];
+                Tree(T->lchild,i,L+1,Num);
+                Tree(T->rchild,num-i,L,Num);
+            }
+        }
+    }
+}
+
+int main()
+{
+
+	int N[4];
+	for(int i=0;i<4;i++)
+		scanf("%d",&N[i]);
+	Tree(head,4,0,N);
+	return 0;
+}
+
