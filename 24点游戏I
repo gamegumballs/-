@@ -1,0 +1,130 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<math.h>
+
+typedef struct BiNode{
+	char key[5];
+	struct BiNode *rchild;
+	struct BiNode *lchild;
+}BiNode,*BiTree;
+
+double numSt[20];                                              //è?????
+int top;
+
+BiTree build()
+{
+	char ch[5];
+	BiTree T;
+	if(scanf("%s",ch)==EOF||ch[0]=='#')
+		return NULL;
+	else
+	{
+		T=(BiTree)malloc(sizeof(BiNode));
+		strcpy(T->key,ch);
+		T->lchild=build();
+		T->rchild=build();
+	}
+	return T;
+}
+
+void output(BiTree T,int r,int l)
+{
+	if(T==NULL)
+		return ;
+	output(T->lchild,0,l+1);
+	if(T->lchild==NULL&&T->rchild==NULL)
+	{
+		int i;
+		for(i=0;i<l;i++)
+		{
+			printf("(");
+		}
+		printf("%s",T->key);
+		for(i=0;i<r;i++)
+		{
+			printf(")");
+		}
+	}
+	else
+	{
+		printf("%s",T->key);
+	}
+	output(T->rchild,r+1,0);
+}
+
+double change(char a[])
+{
+	int k,i;
+	double result=0;
+	k=strlen(a);
+	for(i=0,k--;k>=0;k--,i++)
+	{
+		result=result+(a[k]-'0')*pow(10,i);
+	}
+	return result;
+}
+
+int count(BiTree T)
+{
+	if(T==NULL)
+		return 0;
+	count(T->lchild);
+	count(T->rchild);
+	if(T->key[0]>='0'&&T->key[0]<='9')
+	{
+		numSt[top]=change(T->key);
+		top++;
+	}
+	else
+	{
+		switch(T->key[0])
+		{
+		case '+':
+			numSt[top-2]=numSt[top-2]+numSt[top-1];
+			top--;
+			return 1;
+		case '-':
+			numSt[top-2]=numSt[top-2]-numSt[top-1];
+			top--;
+			return 1;
+		case '*':
+			numSt[top-2]=numSt[top-2]*numSt[top-1];
+			top--;
+			return 1;
+		case '/':
+			numSt[top-2]=numSt[top-2]/numSt[top-1];
+			top--;
+			return 1;
+		default:
+			return 1;
+		}
+	}
+	return 1;
+}
+
+int main()
+{
+	int result=0;
+	BiTree p;
+	p=(BiTree)malloc(sizeof(BiNode));
+	do
+	{
+		int f=0;
+		p=build();
+		top=0;
+		result=count(p);
+		if(result!=0)
+			if(numSt[top-1]>=23.99999&&numSt[top-1]<=24.00001)
+			{
+				output(p,0,0);
+				printf("=%.0lf",numSt[top-1]);
+			}
+			else
+				printf("NO");
+		printf("\n");
+	}while(p!=NULL);
+	return 0;
+}
+
+// + + + 3 # # 8 # # 9 # # 6 # #
