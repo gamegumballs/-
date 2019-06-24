@@ -1,0 +1,250 @@
+#include<stdio.h>
+
+#define LEN 1000
+
+typedef struct zuobiao{
+    int x;
+    int y;
+	int step;
+	char laststep;
+}zb;
+
+int main()
+{
+    int M,N,m,n;
+    char map[13][13];
+	int wx,wy,px,py,bx,by;
+    scanf("%d %d",&N,&M);
+	getchar();
+    for(n=0;n<N;n++)
+    {
+		for(m=0;m<M;m++)
+        {
+            scanf("%c",&map[n][m]);
+            if(map[n][m]=='X')
+			{
+				px=m;
+				py=n;
+				map[n][m]='.';
+			}
+			if(map[n][m]=='*')
+			{
+				bx=m;
+				by=n;
+				map[n][m]='.';
+			}
+			if(map[n][m]=='@')
+			{
+				wx=m;
+				wy=n;
+				map[n][m]='.';
+			}
+        }
+		getchar();
+	}
+	zb qu[LEN];
+	char nextstep;
+	int top,end,allstep=0;
+	//½×¶Î1£ºÏä×Ó·µ»Ø
+	qu[0].x=wx;
+	qu[0].y=wy;
+	qu[0].step=0;
+	qu[0].laststep='\0';
+	top=0;
+	end=1;
+	zb T;
+	while(top!=end&&top!=end+1)
+	{
+		T.x=qu[top].x;
+		T.y=qu[top].y;
+		T.step=qu[top].step;
+		T.laststep=qu[top].laststep;
+		top=(top+1)%LEN;
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		if(T.y-2>=0&&map[T.y-1][T.x]=='.'&&map[T.y-2][T.x]=='.'&&T.laststep!='D')						//ÉÏ
+		{
+			if(T.x==bx&&T.y-1==by)
+			{
+				allstep=T.step+1;
+				nextstep='U';
+				break;
+			}
+			else
+			{
+				qu[end].x=T.x;
+				qu[end].y=T.y-1;
+				qu[end].step=T.step+1;
+				qu[end].laststep='U';
+				end=(end+1)%LEN;
+			}
+		}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		if(T.x-2>=0&&map[T.y][T.x-1]=='.'&&map[T.y][T.x-2]=='.'&&T.laststep!='R')						//×ó
+		{
+			if(T.x-1==bx&&T.y==by)
+			{
+				allstep=T.step+1;
+				nextstep='L';
+				break;
+			}
+			else
+			{
+				qu[end].x=T.x-1;
+				qu[end].y=T.y;
+				qu[end].step=T.step+1;
+				qu[end].laststep='L';
+				end=(end+1)%LEN;
+			}
+		}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		if(T.y+2<n&&map[T.y+2][T.x]=='.'&&map[T.y+1][T.x]=='.'&&T.laststep!='U')						//ÏÂ
+		{
+			if(T.x==bx&&T.y+1==by)
+			{
+				allstep=T.step+1;
+				nextstep='D';
+				break;
+			}
+			else
+			{
+				qu[end].x=T.x;
+				qu[end].y=T.y+1;
+				qu[end].step=T.step+1;
+				qu[end].laststep='D';
+				end=(end+1)%LEN;
+			}
+		}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		if(T.x+2<m&&map[T.y][T.x+1]=='.'&&map[T.y][T.x+2]=='.'&&T.laststep!='L')						//ÓÒ
+		{
+			if(T.x+1==bx&&T.y==by)
+			{
+				allstep=T.step+1;
+				nextstep='R';
+				break;
+			}
+			else
+			{
+				qu[end].x=T.x+1;
+				qu[end].y=T.y;
+				qu[end].step=T.step+1;
+				qu[end].laststep='R';
+				end=(end+1)%LEN;
+			}
+		}	
+	}
+	if(allstep==0)
+	{
+		printf("-1\n");
+		return 0;
+	}
+//	printf("%d\n",allstep);
+	//½×¶Î2£ºÈË·µ»Ø
+////////////////////////////////////////////////////////////////////////////////////////////
+	//Ñ°ÕÒÈË×ø±ê
+	map[by][bx]='*';
+	zb qu1[LEN];
+	switch(nextstep)
+	{
+	case 'U':
+		qu1[0].x=T.x;
+		qu1[0].y=T.y-2;
+		break;
+	case 'L':
+		qu1[0].x=T.x-2;
+		qu1[0].y=T.y;
+		break;
+	case 'D':
+		qu1[0].x=T.x;
+		qu1[0].y=T.y+2;
+		break;
+	case 'R':
+		qu1[0].x=T.x+2;
+		qu1[0].y=T.y;
+		break;
+	}
+	qu1[0].step=0;
+	qu1[0].laststep='\0';
+	end=1;
+	top=0;
+///////////////////////////////////////////////////////////////////////////////////////////
+	//Ñ°ÕÒÈËÂ·¾¶
+	while(top!=end&&top!=end+1)
+	{
+		T.x=qu1[top].x;
+		T.y=qu1[top].y;
+		T.laststep=qu1[top].laststep;
+		T.step=qu1[top].step;
+		top=(top+1)%LEN;
+//////////////////////////////////////////////////////////////////////////////////ÉÏ
+		if(T.y-1>=0&&map[T.y-1][T.x]=='.'&&T.laststep!='D')
+		{
+			if(T.y-1==py&&T.x==px)
+			{
+				printf("%d\n",allstep+T.step+1);
+				return 0;
+			}
+			else
+			{
+				qu1[end].x=T.x;
+				qu1[end].y=T.y-1;
+				qu1[end].laststep='U';
+				qu1[end].step=T.step+1;
+				end=(end+1)%LEN;
+			}
+		}
+//////////////////////////////////////////////////////////////////////////////////×ó
+		if(T.x-1>=0&&map[T.y][T.x-1]=='.'&&T.laststep!='R')
+		{
+			if(T.y==py&&T.x-1==px)
+			{
+				printf("%d\n",allstep+T.step+1);
+				return 0;
+			}
+			else
+			{
+				qu1[end].x=T.x-1;
+				qu1[end].y=T.y;
+				qu1[end].laststep='L';
+				qu1[end].step=T.step+1;
+				end=(end+1)%LEN;
+			}
+		}
+//////////////////////////////////////////////////////////////////////////////////ÏÂ
+		if(T.y+1<n&&map[T.y+1][T.x]=='.'&&T.laststep!='U')
+		{
+			if(T.y+1==py&&T.x==px)
+			{
+				printf("%d\n",allstep+T.step+1);
+				return 0;
+			}
+			else
+			{
+				qu1[end].x=T.x;
+				qu1[end].y=T.y+1;
+				qu1[end].laststep='D';
+				qu1[end].step=T.step+1;
+				end=(end+1)%LEN;
+			}
+		}
+//////////////////////////////////////////////////////////////////////////////////ÓÒ
+		if(T.x+1<m&&map[T.y][T.x+1]=='.'&&T.laststep!='L')
+		{
+			if(T.y==py&&T.x+1==px)
+			{
+				printf("%d\n",allstep+T.step+1);
+				return 0;
+			}
+			else
+			{
+				qu1[end].x=T.x+1;
+				qu1[end].y=T.y;
+				qu1[end].laststep='R';
+				qu1[end].step=T.step+1;
+				end=(end+1)%LEN;
+			}
+		}
+	}
+	printf("-1\n");
+	return 0;
+}
