@@ -1,0 +1,188 @@
+#include<stdio.h>
+
+#define LEN 10000
+
+typedef struct zuobiao{
+    int px;
+    int py;
+    int bx;
+    int by;
+	int step;
+	char laststep;
+}zb;
+
+int main()
+{
+    int M,N,m,n;
+    char map[15][15];
+	int wx,wy;
+    zb head;
+    scanf("%d %d",&N,&M);
+	getchar();
+    for(n=0;n<N;n++)
+    {
+		for(m=0;m<M;m++)
+        {
+            scanf("%c",&map[n][m]);
+            if(map[n][m]=='X')
+			{
+				head.px=m;
+				head.py=n;
+				map[n][m]='.';
+			}
+			if(map[n][m]=='*')
+			{
+				head.bx=m;
+				head.by=n;
+				map[n][m]='.';
+			}
+			if(map[n][m]=='@')
+			{
+				wx=m;
+				wy=n;
+				map[n][m]='.';
+			}
+        }
+		getchar();
+	}
+//	for(n=0;n<N;n++)
+//	{
+//		for(m=0;m<M;m++)
+//			printf("%c ",map[n][m]);
+//		printf("\n");
+//	}
+	zb qu[LEN];
+	zb T;
+	int top=0,end;
+	qu[top].px=head.px;
+	qu[top].py=head.py;
+	qu[top].bx=head.bx;
+	qu[top].by=head.by;
+	qu[top].step=0;
+	qu[top].laststep='\0';
+	top++;
+	end=0;
+	while(top+1!=end)
+	{
+		T.px=qu[end].px;
+		T.py=qu[end].py;
+		T.bx=qu[end].bx;
+		T.by=qu[end].by;
+		T.step=qu[end].step;
+		end=(end+1)%LEN;
+		if(T.py-1>=0&&map[T.py-1][T.px]=='.'&&!(T.py-1==T.by&&T.bx==T.px)&&T.laststep!='D')                      //ÉÏ
+		{
+			qu[top].px=T.px;
+			qu[top].py=T.py-1;
+			qu[top].bx=T.bx;
+			qu[top].by=T.by;
+			qu[top].step=T.step+1;
+			qu[top].laststep='U';
+			top=(top+1)%LEN;
+		}
+		if((T.py-1==T.by&&T.bx==T.px)&&T.by-1>=0&&map[T.by-1][T.bx]=='.'&&T.laststep!='D')
+		{
+			if(T.bx==wx&&T.by==wy-1)
+			{
+				printf("%d\n",T.step+1);
+				return 0;
+			}
+			else
+			{
+				qu[top].px=T.px;
+				qu[top].py=T.py-1;
+				qu[top].bx=T.bx;
+				qu[top].by=T.by-1;
+				qu[top].step=T.step+1;
+				qu[top].laststep='U';
+				top=(top+1)%LEN;
+			}
+		}
+        if(T.px-1>=0&&map[T.py][T.px-1]=='.'&&!(T.py==T.by&&T.px-1==T.bx)&&T.laststep!='R')                      //×ó
+		{
+			qu[top].px=T.px-1;
+			qu[top].py=T.py;
+			qu[top].bx=T.bx;
+			qu[top].by=T.by;
+			qu[top].step=T.step+1;
+			qu[top].laststep='L';
+			top=(top+1)%LEN;
+		}
+		if((T.py==T.by&&T.px-1==T.bx)&&T.bx-1>=0&&map[T.by][T.bx-1]=='.'&&T.laststep!='R')
+		{
+			if(T.bx-1==wx&&T.by==wy)
+			{
+				printf("%d\n",T.step+1);
+				return 0;
+			}
+			else
+			{
+				qu[top].px=T.px-1;
+				qu[top].py=T.py;
+				qu[top].bx=T.bx-1;
+				qu[top].by=T.by;
+				qu[top].step=T.step+1;
+				qu[top].laststep='L';
+				top=(top+1)%LEN;
+			}
+		}
+		if(T.py+1<m&&map[T.py+1][T.px]=='.'&&!(T.py+1==T.by&&T.px==T.bx)&&T.laststep!='U')                      //ÏÂ
+		{
+			qu[top].px=T.px;
+			qu[top].py=T.py+1;
+			qu[top].bx=T.bx;
+			qu[top].by=T.by;
+			qu[top].step=T.step+1;
+			qu[top].laststep='D';
+			top=(top+1)%LEN;
+		}
+		if((T.py+1==T.by&&T.px==T.bx)&&T.by+1<m&&map[T.by+1][T.bx]=='.'&&T.laststep!='U')
+		{
+			if(T.bx==wx&&T.by+1==wy)
+			{
+				printf("%d\n",T.step+1);
+				return 0;
+			}
+			else
+			{
+				qu[top].px=T.px;
+				qu[top].py=T.py+1;
+				qu[top].bx=T.bx;
+				qu[top].by=T.by+1;
+				qu[top].step=T.step+1;
+				qu[top].laststep='D';
+				top=(top+1)%LEN;
+			}
+		}
+		if(T.px+1<n&&map[T.py][T.px+1]=='.'&&!(T.py==T.by&&T.px+1==T.bx)&&T.laststep!='L')                      //ÓÒ
+		{
+			qu[top].px=T.px+1;
+			qu[top].py=T.py;
+			qu[top].bx=T.bx;
+			qu[top].by=T.by;
+			qu[top].step=T.step+1;
+			qu[top].laststep='R';
+			top=(top+1)%LEN;
+		}
+		if((T.py==T.by&&T.px+1==T.bx)&&T.bx+1<n&&map[T.by][T.bx+1]=='.'&&T.laststep!='L')
+		{
+			if(T.bx+1==wx&&T.by==wy)
+			{
+				printf("%d\n",T.step+1);
+				return 0;
+			}
+			else
+			{
+				qu[top].px=T.px+1;
+				qu[top].py=T.py;
+				qu[top].bx=T.bx+1;
+				qu[top].by=T.by;
+				qu[top].step=T.step+1;
+				qu[top].laststep='R';
+				top=(top+1)%LEN;
+			}
+		}
+	}
+	printf("-1\n");
+    return 0;
+}
