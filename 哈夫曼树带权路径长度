@@ -1,0 +1,129 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+#define LEN 1000
+
+typedef struct BiTree{
+    int weight;
+    struct BiTree *next;
+}HT,*ht;
+
+ht Create(ht head,int N)
+{
+    ht p1,p2,pre;
+    int n;
+    p1=(ht)malloc(sizeof(HT));
+    for(n=0;n<N;n++)
+    {
+        scanf("%d",&p1->weight);
+		p1->next=NULL;
+		if(head==NULL)
+		{
+			head=p1;
+		}
+		else
+		{
+			if(head->weight>=p1->weight)
+			{
+				p1->next=head;
+				head=p1;
+			}
+			else
+			{
+				pre=head;
+				p2=head->next;
+				while(p2!=NULL&&p2->weight<p1->weight)
+				{
+					pre=p2;
+					p2=p2->next;
+				}
+				p1->next=p2;
+				pre->next=p1;
+			}
+		}
+		p1=(ht)malloc(sizeof(HT));
+    }
+	return head;
+}
+
+ht output(ht head)
+{
+	int S[LEN],top=0,end=0;
+	int sum=0,x,y;
+	ht p;
+	x=head->weight;
+	sum=(sum+x%1000000007)%1000000007;
+	p=head;
+	head=head->next;
+	free(p);
+	y=head->weight;
+	sum=(sum+y%1000000007)%1000000007;
+	p=head;
+	head=head->next;
+	free(p);
+	S[end]=x+y;
+	end++;
+	while(head!=NULL||top+1!=end)
+	{
+		if(head!=NULL)
+		{
+			if(S[top]<head->weight)
+			{
+				x=S[top];
+				top=(top+1)%LEN;
+			}
+			else
+			{
+				x=head->weight;
+				p=head;
+				head=head->next;
+				free(p);
+			}
+			sum=(sum+x%1000000007)%1000000007;
+			if(head==NULL)
+				goto HNU;
+			if(S[top]<head->weight)
+			{
+				y=S[top];
+				top=(top+1)%LEN;
+			}
+			else
+			{
+				y=head->weight;
+				p=head;
+				head=head->next;
+				free(p);
+			}
+			sum=(sum+y%1000000007)%1000000007;
+			S[end]=x+y;
+			end=(end+1)%LEN;		
+		}
+		else
+		{
+			x=S[top];
+			top=(top+1)%LEN;
+			sum=(sum+x%1000000007)%1000000007;
+HNU:
+			y=S[top];
+			top=(top+1)%LEN;
+			sum=(sum+y%1000000007)%1000000007;
+			S[end]=x+y;
+			end=(end+1)%LEN;
+		}
+	}
+	printf("%d\n",sum);
+	return head;
+}
+
+int main()
+{
+    int N;
+    ht head;
+    head=NULL;
+    while(scanf("%d",&N)!=EOF)
+    {
+        head=Create(head,N);
+        head=output(head);
+    }
+	return 0;
+}
